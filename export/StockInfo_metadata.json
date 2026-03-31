@@ -1,7 +1,6 @@
 {
   "table": "StockInfo",
-  "query": "\nSELECT \n    s.[BCN], \n    First(i.[C1]) AS [Article], \n    First(i.[C2]) AS [Size], \n    First(i.[C3]) AS [Brand], \n    First(i.[C4]) AS [Style], \n    First(i.[D3]) AS [MRP], \n    First(i.[D4]) AS [SalesPrice], \n    Sum(s.[Value1]) AS [TotalQty]\nFROM [ItemParamDet] AS s \nINNER JOIN [ItemParamDet] AS i ON s.[BCN] = i.[BCN]\nWHERE s.[MCCode] = 201 \n  AND s.[RecType] = 1 \n  AND s.[Date] <= Date()\nGROUP BY s.[BCN]\nHAVING Sum(s.[Value1]) <> 0;\n",
   "rows": 19717,
-  "timestamp": "2026-03-31T16:40:39+00:00",
+  "timestamp": "2026-03-31T16:51:03+00:00",
   "hash": "35f88e3c5d63f372ac5a7ad23013b29f"
 }
