@@ -1,0 +1,48 @@
+This is a SQL query that retrieves stock information for items based on specific criteria. The query is designed to work with both Access and SQL Server databases, with slight variations in syntax to accommodate the differences between the two database systems.
+and shows the articles that are in stock will be used for a specific BCN (75012 in this case). The query retrieves the BCN, Article, Size, Brand, Style, MRP, Sales Price, and Total Quantity for items that meet the specified conditions.
+Will be used to create a app that scans the barcode and shows the stock information for that specific item. The app will allow users to quickly check the availability and details of items in stock by scanning their barcodes.
+
+// For access database, the query is as follows:
+SELECT 
+    s.[BCN], 
+    First(i.[C1]) AS [Article], 
+    First(i.[C2]) AS [Size], 
+    First(i.[C3]) AS [Brand], 
+    First(i.[C4]) AS [Style], 
+    First(i.[D3]) AS [MRP], 
+    First(i.[D4]) AS [SalesPrice], 
+    Sum(s.[Value1]) AS [TotalQty]
+FROM [ItemParamDet] AS s 
+INNER JOIN [ItemParamDet] AS i ON s.[BCN] = i.[BCN]
+WHERE s.[MCCode] = 201 
+  AND s.[RecType] = 1 
+  AND s.[Date] <= Date()
+  AND i.[C1] IN (SELECT [C1] FROM [ItemParamDet] WHERE [BCN] = '75012')
+GROUP BY s.[BCN]
+HAVING Sum(s.[Value1]) <> 0;
+
+// For SQL Server, the query is as follows:
+DECLARE @bcn NVARCHAR(20) = '75012';  -- Input BCN parameter
+
+WITH Stock AS (
+    SELECT BCN, SUM(Value1) AS TotalQty
+    FROM [BusyComp0001_db12024].[dbo].[ItemParamDet]
+    WHERE MCCode = 201 
+      AND RecType = 1 
+      AND Date <= CAST(GETDATE() AS DATE)
+    GROUP BY BCN
+    HAVING SUM(Value1) <> 0
+),
+TargetC1 AS (
+    SELECT TOP 1 C1
+    FROM [BusyComp0001_db12024].[dbo].[ItemParamDet]
+    WHERE BCN = @bcn
+)
+SELECT DISTINCT s.BCN, i.C1 AS Article, i.C2 AS Size, i.C3 AS Brand, i.C4 AS Style, i.D3 AS MRP, i.D4 AS SalesPrice
+FROM Stock s
+CROSS APPLY (
+    SELECT TOP 1 C1, C2, C3, C4, D3, D4
+    FROM [BusyComp0001_db12024].[dbo].[ItemParamDet]
+    WHERE BCN = s.BCN
+) i
+WHERE i.C1 = (SELECT C1 FROM TargetC1);
