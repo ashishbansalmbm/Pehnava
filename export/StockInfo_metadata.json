@@ -1,8 +1,8 @@
 {
   "table": "StockInfo",
-  "rows": 30896,
-  "salesRows": 11764,
+  "rows": 30978,
+  "salesRows": 12017,
   "hasSalesHistory": true,
-  "timestamp": "2026-11-19T18:06:16+00:00",
-  "hash": "fdc4ec8e0c577c71e5de1468528eba53"
+  "timestamp": "2026-11-21T14:27:09+00:00",
+  "hash": "5997ee9b9d3d789cd04d8dfb865bd204"
 }
